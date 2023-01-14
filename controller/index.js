@@ -2,9 +2,9 @@ const User = require("../model");
 
 const getAllUser = async (req, res) => {
   try {
-    const user = await User.find();
+    const user = await User.find().limit(req.query.limit * 1).skip((req.query.page - 1) * req.query.limit);
     res.status(200).json({
-      user,
+      user
     });
   } catch (error) {
     res.status(500).json({
@@ -18,6 +18,8 @@ const createUser = async (req, res) => {
     const user = await User.create({
       name: req.body.name,
       email: req.body.email,
+      status: req.body.status,
+      role: req.body.role,
     });
     res.status(200).json({
       status: "User created successfully",
