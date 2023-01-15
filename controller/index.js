@@ -2,9 +2,17 @@ const User = require("../model");
 
 const getAllUser = async (req, res) => {
   try {
-    const user = await User.find().limit(req.query.limit * 1).skip((req.query.page - 1) * req.query.limit);
+    if (req.query.id != undefined) {
+      const singleUser = await User.findById(req.query.id);
+      return res.status(200).json({
+        singleUser,
+      });
+    }
+    const user = await User.find()
+      .limit(req.query.limit * 1)
+      .skip((req.query.page - 1) * req.query.limit);
     res.status(200).json({
-      user
+      user,
     });
   } catch (error) {
     res.status(500).json({
