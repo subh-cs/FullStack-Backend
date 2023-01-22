@@ -7,7 +7,7 @@ const ConnectDB = require("./utils/connectDB");
 //CORS middleware
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://full-stack-frontend-three.vercel.app",
     methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
   })
 );
@@ -16,7 +16,6 @@ ConnectDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-    
 
 const router = require("./routes");
 app.use("/", router);

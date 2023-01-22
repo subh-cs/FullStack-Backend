@@ -1,4 +1,5 @@
 const User = require("../model");
+const { sendMail } = require("../utils/sendMail");
 
 const getAllUser = async (req, res) => {
   try {
@@ -28,6 +29,8 @@ const createUser = async (req, res) => {
       email: req.body.email,
       status: req.body.status,
       role: req.body.role,
+      mobile: req.body.mobile,
+      message: req.body.message,
     });
     res.status(200).json({
       status: "User created successfully",
@@ -60,6 +63,8 @@ const updateUser = async (req, res) => {
       email: req.body.email,
       status: req.body.status,
       role: req.body.role,
+      mobile: req.body.mobile,
+      message: req.body.message,
     });
     res.status(200).json({
       status: "User updated successfully",
@@ -78,10 +83,56 @@ const dummyResponse = (req, res) => {
   });
 };
 
+const sendMailToAll = async (req, res) => {
+  try {
+    const users = await User.find();
+    for (let i = 0; i < users.length; i++) {
+      const email = users[i].email;
+      const message = users[i].message;
+      // create mailOptions
+      const mailOptions = {
+        from: "Subhodip <rsubh281@gmail.com>",
+        to: email,
+        subject: "Welcome",
+        text: message,
+      };
+      const result = await sendMail(mailOptions);
+      console.log("Email sent to", email);
+    }
+    res.status(200).json({ message: "Email sent to everyone successfully" });
+  } catch (error) {
+    console.log("Error", error);
+  }
+};
+
+const searchUser = async (req, res) => {
+  const { name, email, mobile } = req.query;
+  const searchKey = name || email || mobile;
+  try {
+    const user = await User.find({
+      $or: [
+        { name: { $regex: `${searchKey}`, $options: "i" } },
+        { email: { $regex: `${searchKey}`, $options: "i" } },
+        { mobile: { $regex: `${searchKey}`, $options: "i" } },
+      ],
+    });
+    console.log(user);
+    res.status(200).json({
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getAllUser,
   createUser,
   deleteUser,
   updateUser,
   dummyResponse,
+  sendMailToAll,
+  searchUser,
 };

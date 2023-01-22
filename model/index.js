@@ -13,11 +13,12 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
   },
-  time: {
-    type: Date,
-    default: Date.now,
+  mobile: {
+    type: String,
+  },
+  message: {
+    type: String,
   },
 });
-
 
 module.exports = mongoose.model("User", userSchema);
